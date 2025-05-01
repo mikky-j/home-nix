@@ -88,7 +88,6 @@
     enableZshIntegration = true;
 
     settings = {
-      add_newline = false;
       command_timeout = 1000;
       character = {
         success_symbol = "[➜](bold green)";
