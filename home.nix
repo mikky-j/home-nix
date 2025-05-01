@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ pkgs, ... }:
 {
   # Home Manager needs a bit of information about you and the
   # paths it should manage.
@@ -22,13 +22,16 @@
     neovim
     ripgrep
     zsh-completions
-    zsh-autocomplete
+    nixd
+    nil
   ];
 
   programs.zed-editor = {
     enable = true;
+    extensions = [ "nix" ];
     userSettings = {
       base_keymap = "VSCode";
+      restore_on_startup = "none";
       vim_mode = true;
       ui_font_size = 16;
       buffer_font_size = 16;
@@ -49,6 +52,59 @@
   programs.kitty = {
     enable = true;
     themeFile = "Catppuccin-Mocha";
+    shellIntegration.enableZshIntegration = true;
+    settings = {
+      tab_bar_min_tabs = 1;
+      tab_bar_edge = "bottom";
+      tab_bar_style = "powerline";
+      tab_powerline_style = "slanted";
+      tab_title_template = "{title}{' :{}:'.format(num_windows) if num_windows > 1 else ''}";
+      window_padding_width = 10;
+      background_opacity = "0.95";
+      cursor_trail = 3;
+      scrollback_lines = 10000;
+      input_delay = 0;
+      repaint_delay = 0;
+      sync_to_monitor = "no";
+    };
+  };
+
+  programs.atuin = {
+    enable = true;
+    enableZshIntegration = true;
+    settings = {
+      dialect = "uk";
+      inline_height = 0;
+      style = "auto";
+      enter_accept = false;
+      sync = {
+        records = true;
+      };
+    };
+  };
+
+  programs.starship = {
+    enable = true;
+    enableZshIntegration = true;
+
+    settings = {
+      add_newline = false;
+      command_timeout = 1000;
+      character = {
+        success_symbol = "[➜](bold green)";
+        error_symbol = "[✖️](bold red)";
+      };
+      hostname = {
+        ssh_only = false;
+        # format = "[$hostname](bold #71e968): ";
+        format = "[$hostname](bold green): ";
+      };
+      username = {
+        show_always = true;
+        # format = "[$user](bold #c09bf6)@";
+        format = "[$user](bold lavender)[@](bold yellow)";
+      };
+    };
   };
 
   # todo, actual zsh things
@@ -70,6 +126,10 @@
     zplug = {
       enable = true;
       plugins = [
+        {
+          name = "aaronkollasch/zsh-autocomplete"; # workaround for https://github.com/marlonrichert/zsh-autocomplete/issues/741
+          tags = [ "at:d53d90dd205b3ef66101d4cf8692c8518d4daf61" ];
+        }
         {
           name = "niraami/zsh-auto-notify"; # workaround for https://github.com/MichaelAquilina/zsh-auto-notify/pull/49
           tags = [ "at:f1b54479d2db1002f8823d1217509b3e29015acd" ];

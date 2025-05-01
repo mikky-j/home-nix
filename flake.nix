@@ -7,6 +7,7 @@
     nix-darwin.inputs.nixpkgs.follows = "nixpkgs";
     home-manager.url = "github:nix-community/home-manager";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
+    mac-app-util.url = "github:hraban/mac-app-util";
   };
 
   outputs =
@@ -15,6 +16,7 @@
       nix-darwin,
       nixpkgs,
       home-manager,
+      mac-app-util,
       ...
     }:
     {
@@ -25,11 +27,15 @@
         system = "aarch64-darwin";
         modules = [
           ./configuration.nix
+          mac-app-util.darwinModules.default
           home-manager.darwinModules.home-manager
           {
             home-manager.useGlobalPkgs = true;
             home-manager.useUserPackages = true;
             home-manager.users.dami = ./home.nix;
+            home-manager.sharedModules = [
+              mac-app-util.homeManagerModules.default
+            ];
           }
         ];
         specialArgs = { inherit inputs; };

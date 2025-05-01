@@ -1,6 +1,5 @@
 {
   pkgs,
-  lib,
   inputs,
   ...
 }:
@@ -14,6 +13,18 @@
 
   # Necessary for using flakes on this system.
   nix.settings.experimental-features = "nix-command flakes";
+  nix.optimise.automatic = true;
+  nix.gc = {
+    automatic = true;
+    interval = [
+      {
+        Hour = 0;
+        Minute = 0;
+        Weekday = 7;
+      }
+    ];
+    options = "--delete-older-than 1w";
+  };
 
   # Enable alternative shell support in nix-darwin.
   # programs.fish.enable = true;
