@@ -24,17 +24,35 @@
     zsh-completions
     nixd
     nil
+    discord
   ];
 
+  # Enable fonts
+  # fonts.fontconfig.enable = true; we're using nix-darwin for fonts so that they're shared among users
+
+  # Zed editor
   programs.zed-editor = {
     enable = true;
     extensions = [ "nix" ];
+    userKeymaps = [
+        {
+          context = "Editor";
+          bindings = {
+            "j k" = ["workspace::SendKeystrokes" "escape" ];
+          };
+        }
+    ];
     userSettings = {
       base_keymap = "VSCode";
       restore_on_startup = "none";
       vim_mode = true;
       ui_font_size = 16;
       buffer_font_size = 16;
+      languages = {
+        Nix = {
+          show_edit_predictions = false;
+        };
+      };
       theme = {
         mode = "system";
         light = "One Light";
@@ -44,31 +62,13 @@
 
   };
 
+  # Zoxide
   programs.zoxide = {
     enable = true;
     enableZshIntegration = true;
   };
 
-  programs.kitty = {
-    enable = true;
-    themeFile = "Catppuccin-Mocha";
-    shellIntegration.enableZshIntegration = true;
-    settings = {
-      tab_bar_min_tabs = 1;
-      tab_bar_edge = "bottom";
-      tab_bar_style = "powerline";
-      tab_powerline_style = "slanted";
-      tab_title_template = "{title}{' :{}:'.format(num_windows) if num_windows > 1 else ''}";
-      window_padding_width = 10;
-      background_opacity = "0.95";
-      cursor_trail = 3;
-      scrollback_lines = 10000;
-      input_delay = 0;
-      repaint_delay = 0;
-      sync_to_monitor = "no";
-    };
-  };
-
+  # Atuin
   programs.atuin = {
     enable = true;
     enableZshIntegration = true;
@@ -83,6 +83,7 @@
     };
   };
 
+  # Starship
   programs.starship = {
     enable = true;
     enableZshIntegration = true;
@@ -150,6 +151,7 @@
     '';
   };
 
+  # Git
   programs.git = {
     enable = true;
     userName = "Oluwadamilola Oregunwa";

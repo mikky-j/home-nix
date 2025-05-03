@@ -39,9 +39,15 @@
   # The platform the configuration will be used on.
   nixpkgs.hostPlatform = "aarch64-darwin";
 
+  # vscode etc.
+  nixpkgs.config.allowUnfree = true;
+
+  fonts.packages = with pkgs; [
+    nerd-fonts.fira-code
+    nerd-fonts.lilex
+  ];
+
   # -- MANUALLY ADDED SETTINGS --
   # Set sudo to use touch id
   security.pam.services.sudo_local.touchIdAuth = true;
-
-  # security.pam.services.sudo_local.text = "auth sufficient pam_tid.so.2";
 }
