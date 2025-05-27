@@ -25,6 +25,9 @@
     nixd
     nil
     discord
+    pnpm
+    nodejs
+    code-cursor
   ];
 
   # Enable fonts
@@ -35,14 +38,19 @@
     enable = true;
     extensions = [ "nix" ];
     userKeymaps = [
-        {
-          context = "Editor";
-          bindings = {
-            "j k" = ["workspace::SendKeystrokes" "escape" ];
-          };
-        }
+      {
+        context = "vim_mode == insert";
+        bindings = {
+          "j k" = "vim::NormalBefore";
+        };
+      }
     ];
     userSettings = {
+      diagnostics = {
+        inline = {
+          enabled = true;
+        };
+      };
       base_keymap = "VSCode";
       restore_on_startup = "none";
       vim_mode = true;
