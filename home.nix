@@ -28,47 +28,11 @@
     pnpm
     nodejs
     code-cursor
+    zed-editor
   ];
 
   # Enable fonts
   # fonts.fontconfig.enable = true; we're using nix-darwin for fonts so that they're shared among users
-
-  # Zed editor
-  programs.zed-editor = {
-    enable = true;
-    extensions = [ "nix" ];
-    userKeymaps = [
-      {
-        context = "vim_mode == insert";
-        bindings = {
-          "j k" = "vim::NormalBefore";
-        };
-      }
-    ];
-    userSettings = {
-      diagnostics = {
-        inline = {
-          enabled = true;
-        };
-      };
-      base_keymap = "VSCode";
-      restore_on_startup = "none";
-      vim_mode = true;
-      ui_font_size = 16;
-      buffer_font_size = 16;
-      languages = {
-        Nix = {
-          show_edit_predictions = false;
-        };
-      };
-      theme = {
-        mode = "system";
-        light = "One Light";
-        dark = "Catppuccin Mocha";
-      };
-    };
-
-  };
 
   # Zoxide
   programs.zoxide = {
@@ -164,6 +128,9 @@
     enable = true;
     userName = "Oluwadamilola Oregunwa";
     userEmail = "moregunwa@gmail.com";
+    lfs = {
+      enable = true;
+    };
     aliases = {
       sw = "switch";
       st = "status";
