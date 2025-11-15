@@ -24,11 +24,13 @@
     zsh-completions
     nixd
     nil
-    discord
     pnpm
     nodejs
     code-cursor
     zed-editor
+    simple-completion-language-server
+    prismlauncher
+    vesktop
   ];
 
   # Enable fonts
@@ -126,24 +128,17 @@
   # Git
   programs.git = {
     enable = true;
-    userName = "Oluwadamilola Oregunwa";
-    userEmail = "moregunwa@gmail.com";
-    lfs = {
-      enable = true;
-    };
-    aliases = {
-      sw = "switch";
-      st = "status";
-      br = "branch";
-      ci = "commit";
-    };
-    signing = {
-      # for later
-      # key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOiGSjQcRY0rXoi9dRT4dZygGo8vjB/NYJXrAhnZ46NX";
-      key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICopVZhr5fvtDv1nRFd7Qu+E6Csr2fDuPHL0szM/UKmm dami@OluwadalolasAir";
-      format = "ssh";
-    };
-    extraConfig = {
+    settings = {
+      user = {
+        name = "Oluwadamilola Oregunwa";
+        email = "moregunwa@gmail.com";
+      };
+      aliases = {
+        sw = "switch";
+        st = "status";
+        br = "branch";
+        ci = "commit";
+      };
       init.defaultBranch = "main";
       pull.rebase = true;
       push.autoSetupRemote = true;
@@ -167,6 +162,15 @@
       rerere.enabled = true;
       rerere.autoupdate = true;
       merge.conflictstyle = "zdiff3";
+    };
+    lfs = {
+      enable = true;
+    };
+    signing = {
+      # for later
+      # key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOiGSjQcRY0rXoi9dRT4dZygGo8vjB/NYJXrAhnZ46NX";
+      key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICopVZhr5fvtDv1nRFd7Qu+E6Csr2fDuPHL0szM/UKmm dami@OluwadalolasAir";
+      format = "ssh";
     };
   };
 }
