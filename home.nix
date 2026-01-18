@@ -167,10 +167,12 @@
       enable = true;
     };
     signing = {
-      # for later
-      # key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOiGSjQcRY0rXoi9dRT4dZygGo8vjB/NYJXrAhnZ46NX";
-      key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICopVZhr5fvtDv1nRFd7Qu+E6Csr2fDuPHL0szM/UKmm dami@OluwadalolasAir";
+      key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIF1c2DEN/PVsaAxpBJVh8b7xdEg2iLRU9uZkdAAZcc5p";
       format = "ssh";
     };
+  };
+
+  home.sessionVariables = {
+    SSH_AUTH_SOCK = "$HOME/Library/Containers/com.bitwarden.desktop/Data/.bitwarden-ssh-agent.sock";
   };
 }
