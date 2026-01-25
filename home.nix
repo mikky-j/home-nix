@@ -28,9 +28,7 @@
     nodejs
     code-cursor
     zed-editor
-    simple-completion-language-server
     prismlauncher
-    vesktop
   ];
 
   # Enable fonts
@@ -70,13 +68,11 @@
       };
       hostname = {
         ssh_only = false;
-        # format = "[$hostname](bold #71e968): ";
         format = "[$hostname](bold green): ";
       };
       username = {
         show_always = true;
-        # format = "[$user](bold #c09bf6)@";
-        format = "[$user](bold lavender)[@](bold yellow)";
+        format = "[$user](bold #c09bf6)[@](bold yellow)";
       };
     };
   };
@@ -101,8 +97,8 @@
       enable = true;
       plugins = [
         {
-          name = "aaronkollasch/zsh-autocomplete"; # workaround for https://github.com/marlonrichert/zsh-autocomplete/issues/741
-          tags = [ "at:d53d90dd205b3ef66101d4cf8692c8518d4daf61" ];
+          name = "marlonrichert/zsh-autocomplete";
+          tags = [ "at:bbba73ebdc7c01323e09d4d518e51e2d6847ccc2" ];
         }
         {
           name = "niraami/zsh-auto-notify"; # workaround for https://github.com/MichaelAquilina/zsh-auto-notify/pull/49
@@ -133,7 +129,7 @@
         name = "Oluwadamilola Oregunwa";
         email = "moregunwa@gmail.com";
       };
-      aliases = {
+      alias = {
         sw = "switch";
         st = "status";
         br = "branch";

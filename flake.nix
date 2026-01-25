@@ -3,17 +3,14 @@
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
+    mac-app-util.url = "github:hraban/mac-app-util/link-contents";
+    nix-homebrew.url = "github:zhaofengli/nix-homebrew";
 
     nix-darwin.url = "github:nix-darwin/nix-darwin/master";
     nix-darwin.inputs.nixpkgs.follows = "nixpkgs";
 
     home-manager.url = "github:nix-community/home-manager";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
-
-    mac-app-util.url = "github:hraban/mac-app-util";
-    mac-app-util.inputs.nixpkgs.follows = "nixpkgs";
-
-    nix-homebrew.url = "github:zhaofengli/nix-homebrew";
   };
 
   outputs =
