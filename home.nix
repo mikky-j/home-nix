@@ -28,7 +28,7 @@
     nodejs
     code-cursor
     zed-editor
-    prismlauncher
+    gh
   ];
 
   # Enable fonts
