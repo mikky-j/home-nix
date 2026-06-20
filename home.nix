@@ -22,11 +22,9 @@
     neovim
     ripgrep
     zsh-completions
+    libnotify
     nixd
     nil
-    pnpm
-    nodejs
-    code-cursor
     gh
   ];
 
@@ -101,7 +99,6 @@
         };
       };
       base_keymap = "VSCode";
-      buffer_font_size = 16;
       diagnostics = {
         inline = {
           enabled = true;
@@ -123,6 +120,16 @@
       };
       ui_font_size = 16;
       vim_mode = true;
+
+      buffer_font_size = 16;
+      buffer_font_family = "FiraCode Nerd Font Mono";
+
+      diff_view_style = "unified";
+
+      terminal.blinking = "on";
+      terminal.font_family = "Lilex Nerd Font Mono";
+      terminal.option_as_meta = true;
+
       which_key.enabled = true;
       which_key.delay_ms = 0;
     };
@@ -182,31 +189,76 @@
       };
     };
 
-    zplug = {
-      enable = true;
-      plugins = [
-        {
-          name = "marlonrichert/zsh-autocomplete";
-          tags = [ "at:bbba73ebdc7c01323e09d4d518e51e2d6847ccc2" ];
-        }
-        {
-          name = "niraami/zsh-auto-notify"; # workaround for https://github.com/MichaelAquilina/zsh-auto-notify/pull/49
-          tags = [ "at:f1b54479d2db1002f8823d1217509b3e29015acd" ];
-        }
-      ];
-    };
+    plugins = [
+      {
+        # workaround for https://github.com/marlonrichert/zsh-autocomplete/issues/857
+        name = "zsh-autocomplete";
+        src = pkgs.fetchFromGitHub {
+          owner = "SaeGon-Heo";
+          repo = "zsh-autocomplete";
+          rev = "0c321a7cfaeb3eccbaee3ada1a82c8651cec7f54";
+          hash = "sha256-MUXbgiTBoZWNULl4A0Qgl1IR5nsvB7iK0vT5wQYw1Is=";
+        };
+      }
+      {
+        # workaround for https://github.com/MichaelAquilina/zsh-auto-notify/pull/49
+        name = "auto-notify";
+        src = pkgs.fetchFromGitHub {
+          owner = "niraami";
+          repo = "zsh-auto-notify";
+          rev = "f1b54479d2db1002f8823d1217509b3e29015acd";
+          hash = "sha256-17w+I74Cgo9n73gZvVRNO2sWEcbbEH/TnyaIJJxEG8M=";
+        };
+      }
+      {
+        # from https://github.com/direnv/direnv/issues/443#issuecomment-2380714786
+        #
+        # tried updating to 7f0a68e5fa8081554161d0d330d7f2a52683705e but some of the new settings
+        # made zsh-autocomplete fail with `command not found: _autocomplete__unambiguous` and
+        # `command not found: _autocomplete__should_add_space` when `ls *.typ` in ~/Downloads
+        # todo: look into the new settings anf fix i guess?
+        name = "zsh-completion-sync";
+        src = pkgs.fetchFromGitHub {
+          owner = "BronzeDeer";
+          repo = "zsh-completion-sync";
+          rev = "f6e95baf8cd87d9065516d1fa0bf0cb33b4235f3";
+          hash = "sha256-XhZ7l8e2H1+W1oUkDrr8pQVPVbb3+1/wuu7MgXsTs+8=";
+        };
+      }
+    ];
 
     initContent = ''
       setopt nomatch notify interactivecomments
+
+      bindkey '^[[3~' delete-char
+
+      # settings for zsh-auto-notify
+      AUTO_NOTIFY_IGNORE+=("nvim" "vim" "nano" "fg")
+      AUTO_NOTIFY_URGENCY_ON_ERROR="normal"
+      AUTO_NOTIFY_TITLE="\"%command\" completed"
+      AUTO_NOTIFY_BODY="Total time: %elapsed seconds, Exit code: %exit_code"
+
       # settings for marlonrichert/zsh-autocomplete
       zstyle ':autocomplete:*complete*:*' insert-unambiguous yes # insert common substring
       zstyle ':completion:*:*' matcher-list 'm:{[:lower:]-}={[:upper:]_}' '+r:|[.]=**' # use prefix as substring
       bindkey '\t' menu-complete "$terminfo[kcbt]" reverse-menu-complete # use tab/shift-tab to cycle completions
 
-      # settings for zsh-auto-notify
-      AUTO_NOTIFY_IGNORE+=("nvim" "vim" "fg")
-      AUTO_NOTIFY_TITLE="\"%command\" completed"
-      AUTO_NOTIFY_BODY="Total time: %elapsed seconds, Exit code: %exit_code"
+      # this is slow and sad :(
+      # but you gotta do what you gotta do for those completions
+      reload_autocomplete_and_atuin() {
+        source $HOME/.zsh/plugins/zsh-autocomplete/zsh-autocomplete.plugin.zsh
+
+        # settings for marlonrichert/zsh-autocomplete
+        zstyle ':autocomplete:*complete*:*' insert-unambiguous yes # insert common substring
+        zstyle ':completion:*:*' matcher-list 'm:{[:lower:]-}={[:upper:]_}' '+r:|[.]=**' # use prefix as substring
+        bindkey '\t' menu-complete "$terminfo[kcbt]" reverse-menu-complete # use tab/shift-tab to cycle completions
+
+        eval "$(${pkgs.atuin}/bin/atuin init zsh)"
+      }
+
+      # settings for zsh-completion-sync
+      zstyle ':completion-sync:compinit:custom' enabled true
+      zstyle ':completion-sync:compinit:custom' command reload_autocomplete_and_atuin
     '';
   };
 
