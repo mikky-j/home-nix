@@ -1,9 +1,13 @@
 {
   pkgs,
   inputs,
+  config,
   ...
 }:
 {
+  # In order to enable homebrew to know the primary user
+  system.primaryUser = "dami";
+
   users.users.dami.home = "/Users/dami";
   # List packages installed in system profile. To search by name, run:
   # $ nix-env -qaP | grep wget
@@ -50,4 +54,34 @@
   # -- MANUALLY ADDED SETTINGS --
   # Set sudo to use touch id
   security.pam.services.sudo_local.touchIdAuth = true;
+
+  homebrew = {
+    enable = true;
+    enableZshIntegration = true;
+    onActivation = {
+      cleanup = "zap";
+      autoUpdate = true;
+      upgrade = true;
+    };
+    # so that nix-darwin knows about the taps nix-homebrew brings in
+    taps = builtins.attrNames config.nix-homebrew.taps;
+    brews = [
+      "mas" # stop uninstalling it lol
+    ];
+    greedyCasks = true;
+    casks = [
+      "orbstack"
+      "keepingyouawake"
+      "zen"
+      "cloudflare-warp"
+      "lulu"
+      "ghostty"
+      "tailscale-app"
+      "motrix"
+    ];
+    masApps = {
+      Bitwarden = 1352778147;
+      Telegram = 747648890;
+    };
+  };
 }

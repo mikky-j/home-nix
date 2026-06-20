@@ -13,7 +13,7 @@
   # You can update Home Manager without changing this value. See
   # the Home Manager release notes for a list of state version
   # changes in each release.
-  home.stateVersion = "24.11";
+  home.stateVersion = "26.05";
 
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
@@ -32,6 +32,10 @@
 
   # Enable fonts
   # fonts.fontconfig.enable = true; we're using nix-darwin for fonts so that they're shared among users
+
+  # DirEnv
+  programs.direnv.enable = true;
+  programs.direnv.nix-direnv.enable = true;
 
   # Zoxide
   programs.zoxide = {
@@ -57,7 +61,10 @@
   # Zed
   programs.zed-editor = {
     enable = true;
-    extensions = [ "nix" ];
+    extensions = [
+      "nix"
+      "catppuccin"
+    ];
     userSettings = {
       agent_servers = {
         cursor = {
@@ -116,7 +123,25 @@
       };
       ui_font_size = 16;
       vim_mode = true;
+      which_key.enabled = true;
+      which_key.delay_ms = 0;
     };
+    userKeymaps = [
+      # tab to cycle through completions: https://github.com/zed-industries/zed/discussions/11474
+      {
+        context = "Editor && showing_completions";
+        bindings = {
+          tab = "editor::ContextMenuNext";
+          shift-tab = "editor::ContextMenuPrevious";
+        };
+      }
+      {
+        context = "Editor && vim_mode == insert";
+        bindings = {
+          "j k" = "vim::NormalBefore";
+        };
+      }
+    ];
   };
 
   # Starship
@@ -205,7 +230,22 @@
       commit.gpgsign = true;
       url = {
         "ssh://git@github.com/" = {
-          insteadOf = "https://github.com/";
+          insteadOf = [
+            "https://github.com/"
+            "gh:"
+          ];
+        };
+        "ssh://git@gitlab.com/" = {
+          insteadOf = [
+            "https://gitlab.com/"
+            "gl:"
+          ];
+        };
+        "ssh://git@codeberg.org/" = {
+          insteadOf = [
+            "https://codeberg.org/"
+            "co:"
+          ];
         };
       };
 

@@ -3,7 +3,6 @@
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
-    mac-app-util.url = "github:hraban/mac-app-util/link-contents";
     nix-homebrew.url = "github:zhaofengli/nix-homebrew";
 
     nix-darwin.url = "github:nix-darwin/nix-darwin/master";
@@ -11,6 +10,13 @@
 
     home-manager.url = "github:nix-community/home-manager";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
+
+    # homebrew casks
+    homebrew-core.url = "github:homebrew/homebrew-core";
+    homebrew-core.flake = false;
+
+    homebrew-cask.url = "github:homebrew/homebrew-cask";
+    homebrew-cask.flake = false;
   };
 
   outputs =
@@ -19,26 +25,23 @@
       nix-darwin,
       nixpkgs,
       home-manager,
-      mac-app-util,
       nix-homebrew,
       ...
     }:
     {
       formatter.aarch64-darwin = nixpkgs.legacyPackages.aarch64-darwin.nixfmt-rfc-style;
       # Build darwin flake using:
-      # $ darwin-rebuild build --flake .#Oluwadamilolas-MacBook-Air
-      darwinConfigurations."Oluwadamilolas-MacBook-Air" = nix-darwin.lib.darwinSystem {
+      # $ darwin-rebuild build --flake .#Damilolas-MacBook-Air
+      darwinConfigurations."Damilolas-MacBook-Air" = nix-darwin.lib.darwinSystem {
         system = "aarch64-darwin";
         modules = [
           ./configuration.nix
-          mac-app-util.darwinModules.default
           home-manager.darwinModules.home-manager
           {
             home-manager.useGlobalPkgs = true;
             home-manager.useUserPackages = true;
             home-manager.users.dami = ./home.nix;
             home-manager.sharedModules = [
-              mac-app-util.homeManagerModules.default
             ];
           }
           nix-homebrew.darwinModules.nix-homebrew
@@ -52,6 +55,17 @@
 
               # User owning the Homebrew prefix
               user = "dami";
+
+              # Optional: Declarative tap management
+              taps = {
+                "homebrew/homebrew-core" = inputs.homebrew-core;
+                "homebrew/homebrew-cask" = inputs.homebrew-cask;
+              };
+
+              # Optional: Enable fully-declarative tap management
+              #
+              # With mutableTaps disabled, taps can no longer be added imperatively with `brew tap`.
+              mutableTaps = false;
             };
           }
         ];
