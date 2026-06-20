@@ -27,7 +27,6 @@
     pnpm
     nodejs
     code-cursor
-    zed-editor
     gh
   ];
 
@@ -52,6 +51,71 @@
       sync = {
         records = true;
       };
+    };
+  };
+
+  # Zed
+  programs.zed-editor = {
+    enable = true;
+    extensions = [ "nix" ];
+    userSettings = {
+      agent_servers = {
+        cursor = {
+          default_config_options = {
+            mode = "agent";
+            model = "default[]";
+          };
+          type = "registry";
+        };
+      };
+      project_panel = {
+        dock = "left";
+      };
+      outline_panel = {
+        dock = "left";
+      };
+      collaboration_panel = {
+        dock = "left";
+      };
+      git_panel = {
+        dock = "left";
+      };
+      agent = {
+        dock = "right";
+        default_profile = "ask";
+        inline_assistant_model = {
+          provider = "zed.dev";
+          model = "claude-sonnet-4-thinking";
+        };
+        model_parameters = [ ];
+        default_model = {
+          provider = "zed.dev";
+          model = "claude-sonnet-4-thinking";
+        };
+      };
+      base_keymap = "VSCode";
+      buffer_font_size = 16;
+      diagnostics = {
+        inline = {
+          enabled = true;
+        };
+      };
+      languages = {
+        TSX = {
+          show_edit_predictions = false;
+        };
+        Nix = {
+          show_edit_predictions = false;
+        };
+      };
+      restore_on_startup = "none";
+      theme = {
+        dark = "Catppuccin Mocha";
+        light = "One Light";
+        mode = "system";
+      };
+      ui_font_size = 16;
+      vim_mode = true;
     };
   };
 
