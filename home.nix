@@ -26,6 +26,7 @@
     nixd
     nil
     gh
+    dbeaver-bin
   ];
 
   # Enable fonts
