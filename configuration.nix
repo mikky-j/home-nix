@@ -78,10 +78,13 @@
       "ghostty"
       "tailscale-app"
       "motrix"
+      "zed"
     ];
     masApps = {
       Bitwarden = 1352778147;
       Telegram = 747648890;
+      Slack = 803453959;
+      "WhatsApp Messenger" = 310633997;
     };
   };
 }

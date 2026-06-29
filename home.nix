@@ -60,6 +60,7 @@
   # Zed
   programs.zed-editor = {
     enable = true;
+    package = null;
     extensions = [
       "nix"
       "catppuccin"
@@ -150,6 +151,24 @@
         };
       }
     ];
+  };
+
+  # SSH
+  programs.ssh = {
+    enable = true;
+    enableDefaultConfig = false;
+
+    includes = [
+      "~/.orbstack/ssh/config"
+      "~/.ssh/luminovo.config"
+    ];
+
+    settings = {
+      "github.com".IdentityFile = "~/.ssh/github.pub";
+      "gitlab.com".IdentityFile = "~/.ssh/gitlab.pub";
+      "codeberg.org".IdentityFile = "~/.ssh/codeberg.pub";
+    };
+
   };
 
   # Starship
@@ -263,6 +282,14 @@
     '';
   };
 
+  programs.ghostty = {
+    enable = true;
+    package = if pkgs.stdenv.isDarwin then null else pkgs.ghostty;
+    settings = {
+      shell-integration-features = true;
+    };
+  };
+
   # Git
   programs.git = {
     enable = true;
@@ -323,9 +350,21 @@
       key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIF1c2DEN/PVsaAxpBJVh8b7xdEg2iLRU9uZkdAAZcc5p";
       format = "ssh";
     };
+
   };
 
   home.sessionVariables = {
     SSH_AUTH_SOCK = "$HOME/Library/Containers/com.bitwarden.desktop/Data/.bitwarden-ssh-agent.sock";
+  };
+
+  home.file = {
+    ".ssh/github.pub".text =
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIF1c2DEN/PVsaAxpBJVh8b7xdEg2iLRU9uZkdAAZcc5p";
+    ".ssh/gitlab.pub".text =
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAWjBHedGLBALrMyPiBzjeKc6tfk5JVhWqS0vjolOxW2";
+    ".ssh/codeberg.pub".text =
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIF1c2DEN/PVsaAxpBJVh8b7xdEg2iLRU9uZkdAAZcc5p";
+    ".ssh/luminovo.pub".text =
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAID3Cr86sPZv4KahpviCiwzVJ7virBRXVunQ09kcZ08f+";
   };
 }
