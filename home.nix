@@ -1,4 +1,43 @@
 { pkgs, ... }:
+let
+  # ssh only ever sees the host, never the repo path, so per-group gitlab keys have to be
+  # chosen by git. gitlab logs in as whichever account owns the first key it accepts, so only
+  # `pubKey` may be offered: -F /dev/null drops ~/.ssh/config, whose gitlab.com IdentityFile
+  # would be tried before -i, and IdentitiesOnly stops the agent offering its other keys.
+  sshWithKey = pubKey: "ssh -F /dev/null -o IdentitiesOnly=yes -i ${pubKey}";
+
+  # Work identity, applied only to gitlab.com/luminovo repos (see programs.git.includes
+  # below). The default identity in programs.git.settings stays personal, covering github,
+  # personal gitlab.com repos, and everything else.
+  luminovoIdentity = {
+    user.email = "oluwadamilola.oregunwa@luminovo.com";
+    credential.username = "oluwadamilola.oregunwa";
+    core.sshCommand = sshWithKey "~/.ssh/luminovo-gitlab.pub";
+  };
+  servloopeIdentity = {
+    user.email = "moregunwa@gmail.com";
+    credential.username = "mikky-j";
+    core.sshCommand = sshWithKey "~/.ssh/servloope.pub";
+  };
+
+  # Every stored form a gitlab.com remote under `group` can take, scoped to that group so
+  # other gitlab.com repos are left alone. Verified against git 2.54's includeIf `hasconfig`
+  # globbing: the literal `<group>/` segment plus `/**` matches every repo nested under the
+  # group (and correctly rejects e.g. `luminovo-personal/...`).
+  gitlabGroupIncludes =
+    group: contents:
+    map
+      (pat: {
+        condition = "hasconfig:remote.*.url:${pat}";
+        inherit contents;
+      })
+      [
+        "git@gitlab.com:${group}/**"
+        "ssh://git@gitlab.com/${group}/**"
+        "https://gitlab.com/${group}/**"
+        "gl:${group}/**"
+      ];
+in
 {
   # Home Manager needs a bit of information about you and the
   # paths it should manage.
@@ -27,6 +66,10 @@
     nil
     gh
     dbeaver-bin
+    yaak
+    spotify
+    opencode
+    glab
   ];
 
   # Enable fonts
@@ -165,7 +208,7 @@
 
     settings = {
       "github.com".IdentityFile = "~/.ssh/github.pub";
-      "gitlab.com".IdentityFile = "~/.ssh/gitlab.pub";
+      "gitlab.com".IdentityFile = "~/.ssh/luminovo-gitlab.pub";
       "codeberg.org".IdentityFile = "~/.ssh/codeberg.pub";
     };
 
@@ -343,6 +386,11 @@
       rerere.autoupdate = true;
       merge.conflictstyle = "zdiff3";
     };
+    # Conditional identity per gitlab group (email, username, ssh key). home-manager renders
+    # includes after `settings`, so these win over the personal defaults above.
+    includes =
+      gitlabGroupIncludes "luminovo" luminovoIdentity
+      ++ gitlabGroupIncludes "servloope" servloopeIdentity;
     lfs = {
       enable = true;
     };
@@ -355,14 +403,17 @@
 
   home.sessionVariables = {
     SSH_AUTH_SOCK = "$HOME/Library/Containers/com.bitwarden.desktop/Data/.bitwarden-ssh-agent.sock";
+    EDITOR = "vim";
   };
 
   home.file = {
     ".ssh/github.pub".text =
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIF1c2DEN/PVsaAxpBJVh8b7xdEg2iLRU9uZkdAAZcc5p";
-    ".ssh/gitlab.pub".text =
+    ".ssh/luminovo-gitlab.pub".text =
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAWjBHedGLBALrMyPiBzjeKc6tfk5JVhWqS0vjolOxW2";
     ".ssh/codeberg.pub".text =
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIF1c2DEN/PVsaAxpBJVh8b7xdEg2iLRU9uZkdAAZcc5p";
+    ".ssh/servloope.pub".text =
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIF1c2DEN/PVsaAxpBJVh8b7xdEg2iLRU9uZkdAAZcc5p";
     ".ssh/luminovo.pub".text =
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAID3Cr86sPZv4KahpviCiwzVJ7virBRXVunQ09kcZ08f+";

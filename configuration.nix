@@ -78,7 +78,7 @@
       "ghostty"
       "tailscale-app"
       "motrix"
-      "zed"
+      "zed@preview"
     ];
     masApps = {
       Bitwarden = 1352778147;
